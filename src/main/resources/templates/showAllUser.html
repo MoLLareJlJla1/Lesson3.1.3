@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>LastName</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th style="text-align: center;">Role</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="show : ${showAllAttributes}">
+        <td th:text="${show.getName()}">Name</td>
+        <td th:text="${show.getLastName()}">LastName</td>
+        <td th:text="${show.getAge()}">Age</td>
+        <td th:text="${show.getEmail()}">Email</td>
+        <td>
+<!--            тут я выравниваю роль и в зависимости сколько ролей кнопка "изменить пользователя"  будет на одной линии-->
+            <div class="roles-container">
+                <span th:each="role: ${show.getRoles()}" th:text="${role.getName().replace('ROLE_','')+' '}">Roles</span>
+            </div>
+        </td>
+        <td>
+            <form sec:authorize="hasAuthority('ROLE_ADMIN')" th:name="up" th:method="PUT" th:action="@{/admin/update/{id}(id=${show.getId()})}">
+                <input type="hidden" name="_method">
+                <input type="submit" value="Изменить Пользователя">
+            </form>
+        </td>
+        <td>
+            <form sec:authorize="hasAuthority('ROLE_ADMIN')" th:name="delete" th:method="delete" th:action="@{/admin/delete/{id}(id=${show.getId()})}">
+                <input type="hidden" name="_method">
+                <input type="submit" value="Удалить Пользователя">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+
+</table>
+<form sec:authorize="hasAuthority('ROLE_ADMIN')" th:method="get" th:action="@{/admin/add}" >
+    <input type="submit" value="Добавить Нового Пользователя">
+</form>
+<a href="/logout" th:value="logout">Logout</a>
+</body>
+</html>
