@@ -4,10 +4,12 @@ import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.entity.Role;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Repository
 public class RoleDaoImpl implements RoleDao {
-    EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(Role role) {

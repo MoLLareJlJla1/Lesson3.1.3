@@ -1,18 +1,20 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.entity.User;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserDao userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -27,8 +29,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void saveUser(User user) {
-            if (user != null) {
-                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        if (user != null) {
+            String password = user.getPassword();
+            if (!password.startsWith("$2a$")) {
+                user.setPassword(bCryptPasswordEncoder.encode(password));
+            }
             userRepository.save(user);
         }
     }

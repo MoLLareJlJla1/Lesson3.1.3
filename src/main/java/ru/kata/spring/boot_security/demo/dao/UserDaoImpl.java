@@ -4,10 +4,12 @@ import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.entity.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 @Repository
 public class UserDaoImpl implements UserDao{
-    EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(User user) {
@@ -32,7 +34,7 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public User findByEmail(String user) {
-       return entityManager.createQuery("select u FROM User u WHERe u.name = :name", User.class)
+       return entityManager.createQuery("select u FROM User u WHERe u.email = :name", User.class)
                 .setParameter("name",user)
                 .getResultList().stream().findAny().orElse(null);
     }
